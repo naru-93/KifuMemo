@@ -1,0 +1,2 @@
+module KifuHelper
+end
