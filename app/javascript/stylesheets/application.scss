@@ -29,3 +29,7 @@
   grid-template-columns: repeat(9, 70px);
   position: relative;
 }
+
+.cell.highlight {
+  background-color: rgb(224, 165, 78) !important;
+}
