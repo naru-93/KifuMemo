@@ -33,3 +33,38 @@
 .cell.highlight {
   background-color: rgb(224, 165, 78) !important;
 }
+
+.hidden {
+  display: none !important;
+}
+
+#kifu-form {
+  display: none; /* 初期は非表示 */
+  
+  position: fixed;  /* 画面に固定 */
+  top: 20%;         /* 画面中央 */
+  left: 50%;
+  transform: translate(-50%, -50%); /* 中央寄せ */
+  
+  width: 70%;
+  max-width: 600px;
+  
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  
+  z-index: 1000;  /* 上に重ねる */
+}
+
+/* 背景を暗く覆うオーバーレイ（任意） */
+#kifu-overlay {
+  display: none;  /* 初期非表示 */
+  
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+}

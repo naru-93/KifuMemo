@@ -10,10 +10,10 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav ml-auto">
           <% if user_signed_in? %>
-          <li>
-            <a class="nav-link text-light" href="/users">
-            <i class="fa-solid fa-chess-board"></i> 棋譜貼り付け
-            </a>
+            <li class="nav-item">
+              <a href="#" id="toggle-kifu-form" class="nav-link text-light">
+                <i class="fa-solid fa-chess-board"></i> 棋譜の読み込み
+              </a>
           </li>
           <li>
             <%= link_to user_path(current_user), class: "nav-link text-light" do %>

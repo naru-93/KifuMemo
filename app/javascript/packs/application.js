@@ -16,3 +16,29 @@ import '@fortawesome/fontawesome-free/js/all'
 Rails.start()
 Turbolinks.start()
 ActiveStorage.start()
+
+document.addEventListener("turbolinks:load", () => {
+  const toggleBtn = document.getElementById("toggle-kifu-form");
+  const formDiv = document.getElementById("kifu-form");
+  const overlay = document.getElementById("kifu-overlay");
+
+  if (toggleBtn && formDiv && overlay) {
+    toggleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const isHidden = formDiv.classList.contains("hidden");
+      if (isHidden) {
+        formDiv.classList.remove("hidden");
+        overlay.style.display = "block";
+      } else {
+        formDiv.classList.add("hidden");
+        overlay.style.display = "none";
+      }
+    });
+
+    overlay.addEventListener("click", () => {
+      formDiv.classList.add("hidden");
+      overlay.style.display = "none";
+    });
+  }
+});
