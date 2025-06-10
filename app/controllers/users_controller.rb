@@ -8,6 +8,7 @@ before_action :correct_user, only: [:edit, :update] #correct_user = 編集対象
 
   def show
     @user = User.find(params[:id])
+    @kifus = @user.kifus.order(created_at: :desc)
   end
 
   def edit

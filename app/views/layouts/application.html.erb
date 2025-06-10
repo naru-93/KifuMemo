@@ -22,7 +22,7 @@
         <div class="card-body">
           <h5 class="card-title">棋譜の読み込み</h5>
   
-          <%= form_with model: @kifu, local: true do |f| %>
+          <%= form_with model: Kifu.new, url: kifus_path, local: true do |f| %>
             <div class="mb-3">
               <%= f.label :title, "棋譜タイトル", class: "form-label" %>
               <%= f.text_field :title, class: "form-control", placeholder: "タイトルを入力", required: true %>
@@ -39,8 +39,8 @@
             </div>
 
             <div class="mb-3">
-              <%= f.label :kifu_text, "棋譜貼り付け", class: "form-label" %>
-              <%= f.text_area :kifu_text,
+              <%= f.label :moves, "棋譜貼り付け", class: "form-label" %>
+              <%= f.text_area :moves,
                     class: "form-control",
                     rows: 10,
                     placeholder: "ここにKIFを貼り付け",

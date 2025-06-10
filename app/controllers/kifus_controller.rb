@@ -29,8 +29,7 @@ class KifusController < ApplicationController
   def kifu_params
     params.require(:kifu).permit(
       :title,
-      :kifu_text,
-      :category_id,
+      :moves,
       :category_id         
     )
   end
