@@ -4,48 +4,33 @@
       <a class="navbar-brand" href="/">
         <span>棋譜MEMO</span>
       </a>
+
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav ml-auto">
+
+      <div class="collapse navbar-collapse flex-row-reverse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
           <% if user_signed_in? %>
             <li class="nav-item">
               <a href="#" id="toggle-kifu-form" class="nav-link text-light">
                 <i class="fa-solid fa-chess-board"></i> 棋譜の読み込み
               </a>
-          </li>
-          <li>
-            <%= link_to user_path(current_user), class: "nav-link text-light" do %>
-              <i class="fa-solid fa-user"></i> マイページ
-            <% end %>
-          </li>
-          <li>
-            <a class="nav-link text-light" rel="nofollow" data-method="delete" href="/users/sign_out">
-            <i class="fa-solid fa-right-from-bracket"></i> ログアウト
-            </a>
-          </li>
+            </li>
+            <li class="nav-item">
+              <%= link_to user_path(current_user), class: "nav-link text-light" do %>
+                <i class="fa-solid fa-user"></i> マイページ
+              <% end %>
+            </li>
+            <li class="nav-item">
+              <%= link_to destroy_user_session_path, method: :delete, class: "nav-link text-light" do %>
+                <i class="fa-solid fa-right-from-bracket"></i> ログアウト
+              <% end %>
+            </li>
           <% else %>
-          <li>
-            <a class="nav-link text-light" href="/">
-              <i class="fas fa-home"></i>ホーム
-            </a>
-          </li>
-          <li>
-            <a class="nav-link text-light" href="/home/about">
-              <i class="fas fa-link"></i>このサイトについて
-            </a>
-          </li>
-          <li>
-            <a class="nav-link text-light" href="/users/sign_up">
-              <i class="fas fa-user-plus"></i>サインアップ
-            </a>
-          </li>
-          <li>
-            <a class="nav-link text-light" href="/users/sign_in">
-              <i class="fas fa-sign-in-alt"></i>ログイン
-            </a>
-          </li>
+            <li class="nav-item"><%= link_to "ホーム", root_path, class: "nav-link text-light" %></li>
+            <li class="nav-item"><%= link_to "サインアップ", new_user_registration_path, class: "nav-link text-light" %></li>
+            <li class="nav-item"><%= link_to "ログイン", new_user_session_path, class: "nav-link text-light" %></li>
           <% end %>
         </ul>
       </div>

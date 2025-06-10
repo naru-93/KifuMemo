@@ -42,7 +42,7 @@
   display: none; /* 初期は非表示 */
   
   position: fixed;  /* 画面に固定 */
-  top: 20%;         /* 画面中央 */
+  top: 40%;         /* 画面中央 */
   left: 50%;
   transform: translate(-50%, -50%); /* 中央寄せ */
   
@@ -57,14 +57,15 @@
   z-index: 1000;  /* 上に重ねる */
 }
 
-/* 背景を暗く覆うオーバーレイ（任意） */
 #kifu-overlay {
-  display: none;  /* 初期非表示 */
-  
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.5);
-  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.6);  /* 半透明の黒 */
+  z-index: 999;                            /* フォームよりも下、でも他要素より上 */
+}
+.hidden {
+  display: none !important;                /* Tailwind の hidden ユーティリティと同じ振る舞い */
 }
