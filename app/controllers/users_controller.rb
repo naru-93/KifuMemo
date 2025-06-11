@@ -8,7 +8,13 @@ before_action :correct_user, only: [:edit, :update] #correct_user = 編集対象
 
   def show
     @user = User.find(params[:id])
-    @kifus = @user.kifus.order(created_at: :desc)
+    @category_counts = @user.kifus.group(:category_id).count
+    @categories = Category.all
+    if params[:category_id].present?
+      @kifus = @user.kifus.where(category_id: params[:category_id]).order(created_at: :desc)
+    else
+      @kifus = @user.kifus.order(created_at: :desc)
+    end
   end
 
   def edit

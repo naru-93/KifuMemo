@@ -1,2 +1,37 @@
-<h1>Users#edit</h1>
-<p>Find me in app/views/users/edit.html.erb</p>
+<main>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 col-md-8 col-lg-5 px-sm-0 mx-auto mt-3">  
+        <h2 class='text-center'>プロフィール編集</h2>
+        <% if @user.errors.any? %>
+          <h3><%= pluralize(@user.errors.count, "error") %> prohibited this obj from being saved:</h3>
+          <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+          </ul>
+        <% end %>
+
+        <%= form_with model: @user, local: true do |f| %>
+          <div class="mb-3">
+          <label for="user_name">ユーザー名</label>
+            <%= f.text_field :name, class: "form-control", required: true %>
+          </div>
+
+          <div class="mb-3">
+            <label for="user_image">プロフィール画像</label>
+            <%= f.file_field :profile_image, accept: "image/*", class: "form-control-file user-image" %>
+            <% if @user.profile_image.attached? %>
+              <p class="mt-2">現在の画像:</p>
+              <%= image_tag @user.profile_image, size: "100x100", class: "rounded" %>
+            <% end %>
+          </div>
+
+          <div class="text-center mt-5">
+            <%= f.submit "更新", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</main>

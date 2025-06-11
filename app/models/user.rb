@@ -6,4 +6,6 @@ class User < ApplicationRecord
 
   has_many :kifus, dependent: :destroy
   has_one_attached :profile_image 
+
+  validates :name, presence: true, length: { maximum: 20 }
 end

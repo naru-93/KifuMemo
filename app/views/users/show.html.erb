@@ -1,47 +1,88 @@
 <main>
   <div class='container px-5 px-sm-0'>
-    <div class='row'>
+    <div class='row mt-4'>
       <div class='col-md-3'>
-        <table class='table'>
-          <tr>
-            <% if @user.profile_image.attached? %>
-              <%= image_tag @user.profile_image, size: "100x90" %>
-            <% else %>
-              <%= image_tag 'no_image.jpg', size: "100x100" %>
-            <% end %>
-          </tr>
-          <tr>
-            <th>name</th>
-            <th><%= @user.name %></th>
-          </tr>
-        </table>
+        <div class="user-info text-center">
+          <table class='table table-borderless'>
+            <tr>
+              <% if @user.profile_image.attached? %>
+                <%= image_tag @user.profile_image, size: "140x140", style: "border-radius: 5px;" %>
+              <% else %>
+                <%= image_tag 'no_image.jpg', size: "140x140", style: "border-radius: 5px;" %>
+              <% end %>
+            </tr>
+            <tr>
+              <th><%= @user.name %></th>
+            </tr>
+          </table>
+        </div>
+
         <div class='row'>
-        <%= link_to edit_user_path(@user), class: "btn btn-outline-secondary btn-block" do %>
-          <i class="fas fa-user-cog"></i>
-        <% end %>
+          <%= link_to edit_user_path(@user), class: "btn btn-outline-secondary btn-block" do %>
+            <i class="fas fa-user-cog"></i>
+          <% end %>
+        </div>
+
+        <div class="kfiu-category-count mt-3">
+          <table class='table'>
+            <thead>
+              <tr>
+                <th class="text-center" colspan="2">戦法別登録数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @category_counts.sort_by { |_, count| -count }.each do |category_id, count| %>
+                <% category = @categories.find { |c| c.id == category_id } %>
+                <tr>
+                  <td style="padding-top: 6px; padding-bottom: 6px;"><%= category.name %></td>
+                  <td style="padding-top: 6px; padding-bottom: 6px;"><%= count %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div class='col-md-8 offset-md-1'>
-      <h4>棋譜一覧</h4>
-      <table class='table table-hover table-inverse'>
-        <thead>
-          <tr>
-            <th>タイトル</th>
-            <th>戦法</th>
-            <th>作成日</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @kifus.each do |kifu| %>
+      <div class="kifu-list col-md-8 offset-md-1">
+        <h4 class='mt-2 mb-2 text-center'>棋譜一覧</h4>      
+        
+        <table class='table table-hover table-inverse'>
+          <thead>
             <tr>
-              <td><%= link_to kifu.title, kifu_path(kifu) %></td>
-              <td><%= kifu.category&.name || "未設定" %></td>
-              <td><%= kifu.created_at.strftime("%Y/%m/%d") %></td>
+              <th>タイトル</th>
+              <th>
+                <div class="d-flex align-items-center">
+                  戦法
+                  <%= form_with url: user_path(@user), method: :get, local: true, class: "ms-2" do %>
+                    <div class="form-group mb-0 ms- ml-2">
+                      <%= select_tag :category_id,
+                          options_for_select([['全て', '']] + @categories.map { |c| [c.name, c.id] }, params[:category_id]),
+                          class: 'form-select form-select-sm',
+                          onchange: 'this.form.submit();' %>
+                    </div>
+                  <% end %>
+                </div>
+              </th>
+              <th>作成日</th>
+              <th></th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            <% @kifus.each do |kifu| %>
+              <tr>
+                <td><%= link_to kifu.title, kifu_path(kifu), 'data-turbolinks': false %></td>
+                <td><%= kifu.category&.name || "未設定" %></td>
+                <td><%= kifu.created_at.strftime("%Y/%m/%d") %></td>
+                <td>
+                  <%= link_to '編集', edit_kifu_path(kifu), class: "btn btn-sm btn-outline-primary" %>
+                  <%= link_to '削除', kifu_path(kifu), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "btn btn-sm btn-outline-danger" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </main>

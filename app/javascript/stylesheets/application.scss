@@ -39,12 +39,12 @@
 }
 
 #kifu-form {
-  display: none; /* 初期は非表示 */
+  display: none;
   
-  position: fixed;  /* 画面に固定 */
-  top: 40%;         /* 画面中央 */
+  position: fixed;
+  top: 27%;
   left: 50%;
-  transform: translate(-50%, -50%); /* 中央寄せ */
+  transform: translate(-50%, -50%);
   
   width: 70%;
   max-width: 600px;
@@ -54,7 +54,7 @@
   border-radius: 8px;
   padding: 1rem;
   
-  z-index: 1000;  /* 上に重ねる */
+  z-index: 1000;
 }
 
 #kifu-overlay {
@@ -63,9 +63,26 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);  /* 半透明の黒 */
-  z-index: 999;                            /* フォームよりも下、でも他要素より上 */
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
 }
 .hidden {
-  display: none !important;                /* Tailwind の hidden ユーティリティと同じ振る舞い */
+  display: none !important;
+}
+
+.kifu-list{
+  border: 3px solid #555;
+  border-radius: 5px;
+}
+
+.kfiu-category-count th {
+  border-top: none;
+}
+
+.kfiu-category-count tbody{
+  border-bottom: 2px solid #dee2e6;
+}
+
+.title-board{
+  width: fit-content;
 }
