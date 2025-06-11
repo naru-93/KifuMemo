@@ -44,17 +44,17 @@
       </div>
 
       <div class="kifu-list col-md-8 offset-md-1">
-        <h4 class='mt-2 mb-2 text-center'>棋譜一覧</h4>      
+        <h4 class='mt-3 mb-3 text-center'>棋譜一覧</h4>      
         
-        <table class='table table-hover table-inverse'>
+        <table class='table table-hover table-inverse text-center'>
           <thead>
             <tr>
               <th>タイトル</th>
               <th>
-                <div class="d-flex align-items-center">
-                  戦法
+                <div class="d-flex align-items-center justify-content-center">
+                  戦型
                   <%= form_with url: user_path(@user), method: :get, local: true, class: "ms-2" do %>
-                    <div class="form-group mb-0 ms- ml-2">
+                    <div class="form-group mb-0 ml-2">
                       <%= select_tag :category_id,
                           options_for_select([['全て', '']] + @categories.map { |c| [c.name, c.id] }, params[:category_id]),
                           class: 'form-select form-select-sm',
@@ -71,7 +71,7 @@
           <tbody>
             <% @kifus.each do |kifu| %>
               <tr>
-                <td><%= link_to kifu.title, kifu_path(kifu), 'data-turbolinks': false %></td>
+                <td><%= link_to kifu.title, kifu_path(kifu), class: "text-dark", 'data-turbolinks': false %></td>
                 <td><%= kifu.category&.name || "未設定" %></td>
                 <td><%= kifu.created_at.strftime("%Y/%m/%d") %></td>
                 <td>
