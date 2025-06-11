@@ -123,7 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {   // DOM（HTMLのツリ�
             (owner === 'gote' && (row === 8 || row === 7))));
 
         const isOptionalPromotion =
-          canPromote(pieceType) && isPromotionZone(row, owner);
+        canPromote(pieceType) &&
+        (isPromotionZone(fromRow, owner) || isPromotionZone(toRow, owner));
       
         if (isForcedPromotion) {
           promotePiece(movingPiece);

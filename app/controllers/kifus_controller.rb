@@ -28,7 +28,7 @@ class KifusController < ApplicationController
   def update
     @kifu = Kifu.find(params[:id])
     if @kifu.update(kifu_params)
-      redirect_to @kifu, notice: '棋譜を更新しました'
+      redirect_to user_path(current_user), notice: '棋譜を更新しました'
     else
       @categories = Category.all
       render :edit
