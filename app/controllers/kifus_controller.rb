@@ -18,6 +18,15 @@ class KifusController < ApplicationController
 
   def show
     @kifu = Kifu.find(params[:id])
+  
+    # KIF -> JKF変換
+    kif_parser = Jkf::Parser::Kif.new
+    @jkf = kif_parser.parse(@kifu.moves)
+  
+    respond_to do |format|
+      format.html # @kifu, @jkf がビューに渡る
+      format.json { render json: @jkf }
+    end
   end
 
   def edit
