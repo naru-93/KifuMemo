@@ -86,3 +86,30 @@
 .title-board{
   width: fit-content;
 }
+
+.promotion-ui {
+  display: none; /* ★普段は非表示にしておく */
+  position: absolute;
+  color: white;
+  padding: 10px 10px;
+  border-radius: 10px;
+  z-index: 100;
+  text-align: center;
+}
+
+.promotion-ui p {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+/* 成り選択ボタン */
+.promote-btn {
+  padding: 8px 8px;
+  margin: 0 2px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid #fff;
+  background-color: #333;
+  color: #fff;
+  border-radius: 5px;
+}

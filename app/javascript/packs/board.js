@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else {
       // isDroppingがfalseの場合、selectedPieceの親は必ず.cellなので安全
       const fromCell = selectedPiece.parentNode;
-      movePiece(fromCell, toCell);
+      movePiece(fromCell, toCell); 
     }
     
     // ★★★ ここまで修正 ★★★
@@ -155,6 +155,42 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================================
   // 補助関数群
   // ===================================================================
+
+  /**
+   * 指定されたマスの下に成り選択UIを表示し、ユーザーがボタンを押すまで待つ
+   * @param {HTMLDivElement} targetCell - UIを表示する基準となるマス要素
+   * @returns {Promise<boolean>} - 「成る」が押されたら true、「成らない」が押されたら false を返す
+   */
+  function waitForPromotionChoice(targetCell) { // ★変更点1: 引数に targetCell を追加
+    return new Promise(resolve => {
+      const promotionUI = document.getElementById('promotion-choice');
+      const yesBtn = document.getElementById('promote-yes-btn');
+      const noBtn = document.getElementById('promote-no-btn');
+      const board = document.getElementById('shogi-board');
+
+      // ★変更点2: targetCell の座標を取得してUIの位置を計算・設定
+      const rect = targetCell.getBoundingClientRect();
+      // マスの下、中央にUIを配置する
+      promotionUI.style.top = `${rect.bottom + window.scrollY + 5}px`; // マスの下 + 5px の余白
+      promotionUI.style.left = `${rect.left + window.scrollX + rect.width / 2}px`; // マスの中央
+      promotionUI.style.transform = 'translateX(-50%)'; // UI自体を中央揃え
+
+      // 選択中は将棋盤の操作を不可にする
+      board.style.pointerEvents = 'none';
+      promotionUI.style.display = 'block';
+
+      const handleChoice = (promotes) => {
+        // UIを非表示に戻し、将棋盤の操作を再び可能にする
+        promotionUI.style.display = 'none';
+        promotionUI.style.transform = ''; // transformをリセット
+        board.style.pointerEvents = 'auto';
+        resolve(promotes);
+      };
+
+      yesBtn.addEventListener('click', () => handleChoice(true), { once: true });
+      noBtn.addEventListener('click', () => handleChoice(false), { once: true });
+    });
+  }
   
   function selectPiece(img) {
     selectedPiece = img;
@@ -259,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 駒の操作ロジック（手動操作用）
   // ===================================================================
 
-  function movePiece(fromCell, toCell) {
+  async function movePiece(fromCell, toCell) {
     const fromRow = parseInt(fromCell.dataset.row);
     const fromCol = parseInt(fromCell.dataset.col);
     const toRow = parseInt(toCell.dataset.row);
@@ -278,11 +314,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     
-    // 成り判定
-    const canPromotePiece = ['fu', 'kyosha', 'keima', 'gin', 'kaku', 'hisha'].includes(movingPieceData.type);
-    const isPromotionAvailable = canPromotePiece && (isPromotionZone(fromRow, movingPieceData.owner) || isPromotionZone(toRow, movingPieceData.owner));
-    
-    if (isPromotionAvailable && confirm('この駒を成りますか？')) {
+    let promote = false; // 最終的に成るかどうかを管理する変数
+    const pieceType = movingPieceData.type;
+    const owner = movingPieceData.owner;
+  
+    // 【1. 強制成りの判定】
+    // 歩または香車が敵陣の最終段に到達した場合
+    if ((pieceType === 'fu' || pieceType === 'kyosha') &&
+        ((owner === 'sente' && toRow === 0) || (owner === 'gote' && toRow === 8))) {
+      promote = true; // 強制的に成る
+    }
+    // 桂馬が敵陣の最終・準最終段に到達した場合
+    else if (pieceType === 'keima' &&
+             ((owner === 'sente' && toRow <= 1) || (owner === 'gote' && toRow >= 7))) {
+      promote = true; // 強制的に成る
+    }
+    // 【2. 選択成りの判定】
+    else {
+      // 成りの権利がある駒か？ (既に成っている駒は対象外)
+      const canPromotePiece = ['fu', 'kyosha', 'keima', 'gin', 'kaku', 'hisha'].includes(pieceType);
+      
+      // 成りの権利があり、かつ敵陣に移動するか、敵陣内で移動する場合
+      if (canPromotePiece && (isPromotionZone(toRow, owner) || isPromotionZone(fromRow, owner))) {
+        // ユーザーに成るか成らないかを選択させる
+        const userChoosesToPromote = await waitForPromotionChoice(fromCell); 
+        if (userChoosesToPromote) {
+          promote = true;
+        }
+      }
+    }
+  
+    // promoteがtrueに設定されていたら、駒の種類を成りに更新
+    if (promote) {
       movingPieceData.type += '_n';
     }
 
