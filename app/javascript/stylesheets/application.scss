@@ -88,10 +88,10 @@
 }
 
 .promotion-ui {
-  display: none; /* ★普段は非表示にしておく */
+  display: none; /* 普段は非表示にしておく */
   position: absolute;
   color: white;
-  padding: 10px 10px;
+  padding: 10px 5px;
   border-radius: 10px;
   z-index: 100;
   text-align: center;
@@ -103,13 +103,22 @@
 }
 
 /* 成り選択ボタン */
-.promote-btn {
-  padding: 8px 8px;
-  margin: 0 2px;
-  font-size: 13px;
+.promotion-ui img {
+  width: 60px;
+  height: auto;
+  margin: 0 4px;
   cursor: pointer;
-  border: 1px solid #fff;
+  transition: all 0.2s ease; /* ★背景色や枠線の変化も滑らかにします */
+
   background-color: #333;
-  color: #fff;
-  border-radius: 5px;
+  border: 2px solid #c2c2c2;   /* 枠線 */
+  border-radius: 8px;      /* 角を丸くする */
+  padding: 5px;            /* 画像と背景の間に余白を作る */
+  box-sizing: border-box;  /* paddingとborderをwidth/heightに含めて計算する重要な設定 */
+}
+
+.promotion-ui img:hover {
+  transform: scale(1.1);
+  border-color: #C2B2A0;      /* ★ホバー時の枠線色 */
+  background-color: #6A5D4D; /* ★ホバー時の背景色 */
 }

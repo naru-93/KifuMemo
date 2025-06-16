@@ -157,46 +157,52 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================================
 
   /**
-   * 指定されたマスの下に成り選択UIを表示し、ユーザーがボタンを押すまで待つ
+   * 指定されたマスの下に成り/不成の駒画像UIを表示し、ユーザーが画像をクリックするまで待つ
    * @param {HTMLDivElement} targetCell - UIを表示する基準となるマス要素
-   * @returns {Promise<boolean>} - 「成る」が押されたら true、「成らない」が押されたら false を返す
+   * @param {object} pieceData - 動かす駒のデータ { type, owner }
+   * @returns {Promise<boolean>} - 「成る」画像がクリックされたら true、「成らない」なら false を返す
    */
-  function waitForPromotionChoice(targetCell) { // ★変更点1: 引数に targetCell を追加
+  function waitForPromotionChoice(targetCell, pieceData) { // ★変更点1: pieceData を追加
     return new Promise(resolve => {
       const promotionUI = document.getElementById('promotion-choice');
-      const yesBtn = document.getElementById('promote-yes-btn');
-      const noBtn = document.getElementById('promote-no-btn');
+      // ★変更点2: ボタンから画像要素の取得に変更
+      const yesImg = document.getElementById('promote-yes-img');
+      const noImg = document.getElementById('promote-no-img');
       const board = document.getElementById('shogi-board');
 
-      // ★変更点2: targetCell の座標を取得してUIの位置を計算・設定
-      const rect = targetCell.getBoundingClientRect();
-      // マスの下、中央にUIを配置する
-      promotionUI.style.top = `${rect.bottom + window.scrollY + 5}px`; // マスの下 + 5px の余白
-      promotionUI.style.left = `${rect.left + window.scrollX + rect.width / 2}px`; // マスの中央
-      promotionUI.style.transform = 'translateX(-50%)'; // UI自体を中央揃え
+      // ★変更点3: pieceData に基づいて表示する画像のURLを動的に設定
+      const ownerPrefix = pieceData.owner === 'gote' ? 'r_' : '';
+      // 「成る」画像のURL（例: /assets/koma/fu_n.png）
+      yesImg.src = `/assets/koma/${ownerPrefix}${pieceData.type}_n.png`;
+      // 「成らない」画像のURL（例: /assets/koma/fu.png）
+      noImg.src = `/assets/koma/${ownerPrefix}${pieceData.type}.png`;
 
-      // 選択中は将棋盤の操作を不可にする
+      const rect = targetCell.getBoundingClientRect();
+      promotionUI.style.top = `${rect.bottom + window.scrollY + 5}px`;
+      promotionUI.style.left = `${rect.left + window.scrollX + rect.width / 2}px`;
+      promotionUI.style.transform = 'translateX(-50%)';
+
       board.style.pointerEvents = 'none';
       promotionUI.style.display = 'block';
 
       const handleChoice = (promotes) => {
-        // UIを非表示に戻し、将棋盤の操作を再び可能にする
         promotionUI.style.display = 'none';
-        promotionUI.style.transform = ''; // transformをリセット
+        promotionUI.style.transform = '';
         board.style.pointerEvents = 'auto';
         resolve(promotes);
       };
 
-      yesBtn.addEventListener('click', () => handleChoice(true), { once: true });
-      noBtn.addEventListener('click', () => handleChoice(false), { once: true });
+      // ★変更点4: イベントリスナーを画像に設定
+      yesImg.addEventListener('click', () => handleChoice(true), { once: true });
+      noImg.addEventListener('click', () => handleChoice(false), { once: true });
     });
   }
   
   function selectPiece(img) {
     selectedPiece = img;
-    img.style.transform = 'translate(-5px, -5px)';
+    img.style.transform = 'translate(-4px, -6px)';
     img.style.zIndex = '10';
-    img.style.filter = 'drop-shadow(0 0 3px white) drop-shadow(0 0 8px rgba(255, 255, 255, 0.7)';
+    img.style.filter = 'drop-shadow(0 0 3px white)';
   
     const cell = img.parentNode;
     
@@ -331,13 +337,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // 【2. 選択成りの判定】
     else {
-      // 成りの権利がある駒か？ (既に成っている駒は対象外)
       const canPromotePiece = ['fu', 'kyosha', 'keima', 'gin', 'kaku', 'hisha'].includes(pieceType);
-      
-      // 成りの権利があり、かつ敵陣に移動するか、敵陣内で移動する場合
       if (canPromotePiece && (isPromotionZone(toRow, owner) || isPromotionZone(fromRow, owner))) {
-        // ユーザーに成るか成らないかを選択させる
-        const userChoosesToPromote = await waitForPromotionChoice(fromCell); 
+        
+        // ★変更点: waitForPromotionChoice に movingPieceData を渡す
+        const userChoosesToPromote = await waitForPromotionChoice(fromCell, movingPieceData); 
+        
         if (userChoosesToPromote) {
           promote = true;
         }
