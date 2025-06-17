@@ -412,6 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
           delete kifuComments[replayCurrent];
         }
         displayCurrentComment();
+        renderMoveList();
       } else {
         alert('保存に失敗しました: ' + result.errors.join(', '));
       }
