@@ -122,3 +122,21 @@
   border-color: #C2B2A0;      /* ★ホバー時の枠線色 */
   background-color: #6A5D4D; /* ★ホバー時の背景色 */
 }
+
+/* ボタンと手数表示のコンテナ */
+#kifu-controls {
+  display: flex;
+  justify-content: center; /* 中央揃え */
+  align-items: center;     /* 上下中央揃え */
+  margin-top: 15px;        /* 将棋盤との間に余白 */
+  gap: 15px;               /* 各要素の間の隙間 */
+}
+
+/* 手数表示のスタイル */
+#move-counter {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  min-width: 120px; /* 数字が変わってもガタつかないように最小幅を指定 */
+  text-align: center;
+}

@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let hand = { sente: {}, gote: {} };
   let replayCurrent = 0;
+  let kifuComments = {};
   const jkfMoves = jkf.moves;
   const btnNext = document.getElementById("btn-next");
   const btnBack = document.getElementById("btn-back");
@@ -144,8 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
       movePiece(fromCell, toCell); 
     }
     
-    // ★★★ ここまで修正 ★★★
-    
     // 動作後は必ず選択解除
     resetPieceStyle(selectedPiece);
     selectedPiece = null;
@@ -155,6 +154,91 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================================
   // 補助関数群
   // ===================================================================
+
+  /**
+   * 現在の手番のコメントを表示/入力欄に反映する
+   */
+  function displayCurrentComment() {
+    // ★表示エリアに関する行を削除
+    const inputArea = document.getElementById('comment-input-area');
+    const comment = kifuComments[replayCurrent] || ''; // 保存されたコメントを取得
+  
+    // テキストエリアにコメントを直接設定する
+    inputArea.value = comment; 
+  }
+
+  /**
+   * HTMLのdata属性からコメントを読み込む
+   */
+  function loadComments() {
+    const container = document.getElementById('shogi-container');
+    if (container && container.dataset.comments) {
+      // JSON文字列をパースして kifuComments に格納
+      kifuComments = JSON.parse(container.dataset.comments);
+    } else {
+      kifuComments = {};
+    }
+  }
+
+  /**
+   * 入力されたコメントをサーバーに送信して保存する
+   */
+  async function saveComment() {
+    const container = document.getElementById('shogi-container');
+    const kifuId = container.dataset.kifuId;
+
+    const inputArea = document.getElementById('comment-input-area');
+    const commentText = inputArea.value; // trim() は削除。空文字を送って削除を実現するため。
+
+    // RailsのCSRFトークンを取得（Railsアプリでは必須）
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+
+    try {
+      const response = await fetch(`/kifus/${kifuId}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': token // CSRFトークンをヘッダーに含める
+        },
+        body: JSON.stringify({
+          move_number: replayCurrent,
+          body: commentText
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('サーバーとの通信に失敗しました。');
+      }
+
+      const result = await response.json();
+      
+      if (result.status === 'success') {
+        // 成功したら、ローカルのコメントデータも更新
+        if (commentText) {
+          kifuComments[replayCurrent] = commentText;
+        } else {
+          delete kifuComments[replayCurrent];
+        }
+        displayCurrentComment();
+      } else {
+        alert('保存に失敗しました: ' + result.errors.join(', '));
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('エラーが発生しました。');
+    }
+  }
+
+  /**
+   * 手数カウンターの表示を更新する
+   */
+  function updateMoveCounter() {
+    const counterElement = document.getElementById('move-counter');
+    if (counterElement) {
+      counterElement.textContent = `${replayCurrent}`;
+    }
+  }
 
   /**
    * 指定されたマスの下に成り/不成の駒画像UIを表示し、ユーザーが画像をクリックするまで待つ
@@ -577,12 +661,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================================
   
   setupInitialBoard();
+  updateMoveCounter();
   applyMovesUntil(replayCurrent);
 
   btnNext.addEventListener('click', () => {
     if (replayCurrent < jkfMoves.length - 1) {
       replayCurrent++;
       applyMovesUntil(replayCurrent);
+      updateMoveCounter();
+      displayCurrentComment();
     }
   });
 
@@ -590,8 +677,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (replayCurrent > 0) {
       replayCurrent--;
       applyMovesUntil(replayCurrent);
+      updateMoveCounter();
+      displayCurrentComment();
     }
   });
+
+  const saveBtn = document.getElementById('save-comment-btn');
+  saveBtn.addEventListener('click', saveComment);
+
+  setupInitialBoard();
+  applyMovesUntil(replayCurrent);
+  updateMoveCounter(); 
+  loadComments(); // ★追加: コメントを読み込む
+  displayCurrentComment(); // ★追加: 初期コメントを表示
 
   document.body.addEventListener('click', (e) => {
     // 盤面や駒台の外側をクリックしたら、選択を解除する

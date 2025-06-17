@@ -27,6 +27,8 @@ class KifusController < ApplicationController
       format.html # @kifu, @jkf がビューに渡る
       format.json { render json: @jkf }
     end
+
+    @comments_hash = @kifu.comments.pluck(:move_number, :body).to_h
   end
 
   def edit
