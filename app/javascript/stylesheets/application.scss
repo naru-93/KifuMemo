@@ -141,7 +141,7 @@
   text-align: center;
 }
 
-.info-comments {
+.kifulist-comments {
   width: 500px;
 }
 
@@ -150,13 +150,51 @@
 }
 
 #comment-input-area{
-  border: 2px solid rgb(43, 43, 43);  /* 枠線 */
-  padding: 0.5em;          /* 内側の余白量 */
+  border: 2px solid rgb(43, 43, 43);
+  padding: 0.5em;
   background-color: rgb(255, 255, 255);
-  font-size: 1em;          /* 文字サイズ */
-  line-height: 1.6;        /* 行の高さ */
+  font-size: 1em;
+  line-height: 1.6;
 }
 
 #save-comment-btn {
   margin-left: auto;
+}
+
+/* 棋譜リストのコンテナ */
+#kifu-move-list {
+  height: 300px;
+  padding-left: 6px;
+  overflow-y: scroll; /* 高さを超えたらスクロールバーを表示 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  font-size: 0.9rem;
+}
+
+/* 棋譜リストの各行 */
+#kifu-move-list .move-item.active-move {
+  background-color: #fce1e3; /* 少し優しい赤色に変更 */
+  border-radius: 4px; /* ハイライトに角丸をつけると、より見やすくなります */
+  font-weight: bold;
+}
+
+/* 手数 */
+.move-number {
+  margin-right: 1em;  /* 半角スペースではなく、固定の余白を指定 */
+  font-weight: bold;
+}
+
+/* 指し手テキスト */
+.move-text {
+  white-space: nowrap;      /* 折り返さない */
+  overflow: hidden;         /* はみ出した部分は隠す */
+  text-overflow: ellipsis;  /* はみ出した部分を ... で表示 */
+}
+
+/* コメント付きの目印 */
+.comment-indicator {
+  padding-left: 10px;    /* テキストとの間に少し隙間を空ける */
+  font-size: 0.9em;
+  color: #db4d5b;
 }

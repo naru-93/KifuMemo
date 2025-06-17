@@ -28,6 +28,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnNext = document.getElementById("btn-next");
   const btnBack = document.getElementById("btn-back");
 
+  const zenkakuNumbers = ['１', '２', '３', '４', '５', '６', '７', '８', '９'];
+  const kanjiNumbers = ['一', '二', '三', '四', '五', '六', '七', '八', '九'];
+  const pieceToKanji = {
+    'FU': '歩', 'KY': '香', 'KE': '桂', 'GI': '銀', 'KI': '金', 'KA': '角', 'HI': '飛', 'OU': '玉',
+    'TO': 'と', 'NY': '杏', 'NK': '圭', 'NG': '全', 'UM': '馬', 'RY': '竜'
+  };
+
+  const specialMoveToKanji = {
+    'TORYO': '投了',
+    'CHUDAN': '中断',
+    'SENNICHITE': '千日手',
+    'JISHOGI': '持将棋',
+    'ILLEGAL_MOVE': '反則負け'
+    // 他にも必要であれば追加
+  };
+
   // --- 記号挿入ボタンの処理 ---
   const inputArea = document.getElementById('comment-input-area');
   const senteBtn = document.getElementById('insert-sente-symbol');
@@ -200,6 +216,136 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================================
   // 補助関数群
   // ===================================================================
+
+  /**
+   * JKFの指し手オブジェクトを日本語棋譜形式の文字列に変換する（修正版）
+   * @param {object} moveObject - JKFの指し手オブジェクト
+   * @returns {string} - 例: "▲７六歩(77)" や "投了"
+   */
+  function jkfMoveToJPN(moveObject) {
+    // moveObjectが空かチェック
+    if (!moveObject) { return ''; }
+
+    // 投了などの特殊な指し手
+    if (moveObject.special) {
+      return specialMoveToKanji[moveObject.special] || moveObject.special;
+    }
+
+    // 通常の指し手
+    if (moveObject.move) {
+      const move = moveObject.move;
+      const turnSymbol = move.color === 0 ? '▲' : '△';
+      const toX = zenkakuNumbers[move.to.x - 1];
+      const toY = kanjiNumbers[move.to.y - 1];
+      const pieceKanji = pieceToKanji[move.piece];
+
+      let fromStr = '';
+      let promoteStr = '';
+
+      if (move.promote) {
+        promoteStr = '成';
+      }
+      if (move.from) {
+        fromStr = `(${move.from.x}${move.from.y})`;
+      } else {
+        fromStr = '打';
+        promoteStr = '';
+      }
+      return `${turnSymbol}${toX}${toY}${pieceKanji}${promoteStr}${fromStr}`;
+    }
+
+    // moveもspecialも無い場合（コメントのみの要素など）は空文字を返す
+    return '';
+  }
+  
+  /**
+   * 棋譜リストをHTMLに描画する（レイアウト修正版）
+   */
+  function renderMoveList() {
+    const listContainer = document.getElementById('kifu-move-list');
+    if (!listContainer) return;
+
+    listContainer.innerHTML = ''; // 一旦空にする
+
+    // 「初期局面」の項目
+    const initialItem = document.createElement('div');
+    initialItem.className = 'move-item';
+    initialItem.dataset.moveNumber = 0;
+    // --- 盤面描画の修正に倣って、こちらもspanで構成 ---
+    const initialNumSpan = document.createElement('span');
+    initialNumSpan.className = 'move-number';
+    initialNumSpan.textContent = 0;
+    const initialTextSpan = document.createElement('span');
+    initialTextSpan.className = 'move-text';
+    initialTextSpan.textContent = '初期局面';
+    initialItem.appendChild(initialNumSpan);
+    initialItem.appendChild(initialTextSpan);
+    if (kifuComments[0]) {
+      const commentIndicator = document.createElement('span');
+      commentIndicator.className = 'comment-indicator';
+      commentIndicator.textContent = '📝';
+      initialItem.appendChild(commentIndicator);
+    }
+    listContainer.appendChild(initialItem);
+
+
+    // 1手目以降のループ
+    for (let i = 1; i < jkfMoves.length; i++) {
+      const moveItem = document.createElement('div');
+      moveItem.className = 'move-item';
+      moveItem.dataset.moveNumber = i;
+
+      // ▼▼▼ この部分を、すべてspan要素を生成する方法に統一します ▼▼▼
+
+      // 1. 手数を表示するspan要素を作成
+      const moveNumberSpan = document.createElement('span');
+      moveNumberSpan.className = 'move-number';
+      moveNumberSpan.textContent = i;
+
+      // 2. 指し手テキストを表示するspan要素を作成
+      const moveTextSpan = document.createElement('span');
+      moveTextSpan.className = 'move-text';
+      moveTextSpan.textContent = jkfMoveToJPN(jkfMoves[i]);
+
+      // 3. moveItemの中に、手数と指し手のspan要素を追加
+      moveItem.appendChild(moveNumberSpan);
+      moveItem.appendChild(moveTextSpan);
+
+      // 4. コメントがあれば、目印のspan要素を追加
+      if (kifuComments[i]) {
+        const commentIndicator = document.createElement('span');
+        commentIndicator.className = 'comment-indicator';
+        commentIndicator.textContent = '📝コメント有';
+        moveItem.appendChild(commentIndicator);
+      }
+      
+      // ▲▲▲ ここまで ▲▲▲
+
+      listContainer.appendChild(moveItem);
+    }
+  }
+  
+  /**
+   * 棋譜リストの現在の指し手をハイライトする
+   */
+  function highlightCurrentMoveInList() {
+    const listContainer = document.getElementById('kifu-move-list');
+    if (!listContainer) return;
+  
+    // 以前のハイライトを削除
+    const prevActive = listContainer.querySelector('.active-move');
+    if (prevActive) {
+      prevActive.classList.remove('active-move');
+    }
+  
+    // 現在の手番の要素を探してハイライト
+    const currentMoveElement = listContainer.querySelector(`[data-move-number="${replayCurrent}"]`);
+    if (currentMoveElement) {
+      currentMoveElement.classList.add('active-move');
+      // ハイライトした要素が画面内に表示されるようにスクロール
+      currentMoveElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
 
   /**
    * 現在の手番のコメントを表示/入力欄に反映する
@@ -705,10 +851,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================================
   // 初期化とメインのイベントリスナー
   // ===================================================================
-  
-  setupInitialBoard();
-  updateMoveCounter();
-  applyMovesUntil(replayCurrent);
 
   btnNext.addEventListener('click', () => {
     if (replayCurrent < jkfMoves.length - 1) {
@@ -716,6 +858,8 @@ document.addEventListener('DOMContentLoaded', () => {
       applyMovesUntil(replayCurrent);
       updateMoveCounter();
       displayCurrentComment();
+      renderMoveList();
+      highlightCurrentMoveInList();
     }
   });
 
@@ -725,6 +869,7 @@ document.addEventListener('DOMContentLoaded', () => {
       applyMovesUntil(replayCurrent);
       updateMoveCounter();
       displayCurrentComment();
+      highlightCurrentMoveInList();
     }
   });
 
@@ -734,8 +879,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setupInitialBoard();
   applyMovesUntil(replayCurrent);
   updateMoveCounter(); 
-  loadComments(); // ★追加: コメントを読み込む
-  displayCurrentComment(); // ★追加: 初期コメントを表示
+  loadComments();
+  displayCurrentComment();
+  highlightCurrentMoveInList();
 
   document.body.addEventListener('click', (e) => {
     // 盤面や駒台の外側をクリックしたら、選択を解除する
@@ -749,4 +895,40 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+
+  // --- 棋譜リストのクリックイベント ---
+  const moveListContainer = document.getElementById('kifu-move-list');
+  if (moveListContainer) {
+    moveListContainer.addEventListener('click', (e) => {
+      // クリックされたのが .move-item 要素か、その子要素かを確認
+      const clickedItem = e.target.closest('.move-item');
+
+      if (clickedItem) {
+        // data属性からジャンプしたい手数を取得
+        const targetMoveNumber = parseInt(clickedItem.dataset.moveNumber, 10);
+
+        // 同じ手数をクリックした場合は何もしない
+        if (targetMoveNumber === replayCurrent) {
+          return;
+        }
+        
+        // グローバルな手数を更新
+        replayCurrent = targetMoveNumber;
+
+        // 盤面と各種表示をすべて更新
+        applyMovesUntil(replayCurrent);
+        updateMoveCounter();
+        displayCurrentComment();
+        highlightCurrentMoveInList();
+      }
+    });
+  }
+
+  setupInitialBoard();         // 1. 盤面の基本的な設定
+  loadComments();              // 2. ★★★まずコメントデータを読み込む★★★
+  renderMoveList();            // 3. ★★★コメントデータを元に棋譜リストを描画★★★
+  applyMovesUntil(replayCurrent); // 4. 盤面を初期位置に設定
+  updateMoveCounter();         // 5. 手数カウンターを更新
+  displayCurrentComment();     // 6. コメント欄を更新
+  highlightCurrentMoveInList();  // 7. 棋譜リストのハイライトを更新
 });
