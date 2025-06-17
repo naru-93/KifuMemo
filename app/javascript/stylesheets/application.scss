@@ -140,3 +140,23 @@
   min-width: 120px; /* 数字が変わってもガタつかないように最小幅を指定 */
   text-align: center;
 }
+
+.info-comments {
+  width: 500px;
+}
+
+#comment-section {
+  width: 500px;
+}
+
+#comment-input-area{
+  border: 2px solid rgb(43, 43, 43);  /* 枠線 */
+  padding: 0.5em;          /* 内側の余白量 */
+  background-color: rgb(255, 255, 255);
+  font-size: 1em;          /* 文字サイズ */
+  line-height: 1.6;        /* 行の高さ */
+}
+
+#save-comment-btn {
+  margin-left: auto;
+}

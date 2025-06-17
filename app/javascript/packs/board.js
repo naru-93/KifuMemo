@@ -28,9 +28,55 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnNext = document.getElementById("btn-next");
   const btnBack = document.getElementById("btn-back");
 
+  // --- 記号挿入ボタンの処理 ---
+  const inputArea = document.getElementById('comment-input-area');
+  const senteBtn = document.getElementById('insert-sente-symbol');
+  const goteBtn = document.getElementById('insert-gote-symbol');
+
   // ===================================================================
   // イベントハンドラ（クリックされた時の主要な処理）
   // ===================================================================
+
+  /**
+   * テキストエリアのカーソル位置にテキストを挿入する関数
+   * @param {string} textToInsert - 挿入するテキスト (例: '▲')
+   */
+  function insertAtCursor(textToInsert) {
+    // テキストエリア要素がなければ何もしない
+    if (!inputArea) return;
+
+    const cursorPos = inputArea.selectionStart; // 現在のカーソル位置
+    const currentValue = inputArea.value;      // 現在のテキスト全体
+    
+    const textBefore = currentValue.substring(0, cursorPos); // カーソル前のテキスト
+    const textAfter = currentValue.substring(cursorPos);     // カーソル後のテキスト
+
+    // テキストを挿入して、テキストエリアの値を更新
+    inputArea.value = textBefore + textToInsert + textAfter;
+
+    // カーソル位置を挿入したテキストの直後に移動させる
+    const newCursorPos = cursorPos + textToInsert.length;
+    inputArea.selectionStart = newCursorPos;
+    inputArea.selectionEnd = newCursorPos;
+
+    // テキストエリアにフォーカスを戻し、ユーザーがすぐに入力を続けられるようにする
+    inputArea.focus();
+  }
+
+  // 各ボタンのクリックイベントを設定
+  if (senteBtn) {
+    senteBtn.addEventListener('click', (e) => {
+      e.preventDefault(); // ボタン本来の動作（フォーム送信など）をキャンセル
+      insertAtCursor('▲');
+    });
+  }
+
+  if (goteBtn) {
+    goteBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      insertAtCursor('△');
+    });
+  }
 
   /**
    * 指定されたマスが、指定されたプレイヤーの成れるゾーン（敵陣）かどうかを判定する
