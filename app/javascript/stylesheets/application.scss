@@ -19,9 +19,7 @@
 }
 
 #bottom-row{
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
+  margin-top: auto;
 }
 
 .board {
@@ -170,6 +168,7 @@
   border-radius: 4px;
   background-color: #f9f9f9;
   font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 /* 棋譜リストの各行 */
@@ -187,14 +186,45 @@
 
 /* 指し手テキスト */
 .move-text {
-  white-space: nowrap;      /* 折り返さない */
-  overflow: hidden;         /* はみ出した部分は隠す */
-  text-overflow: ellipsis;  /* はみ出した部分を ... で表示 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* コメント付きの目印 */
 .comment-indicator {
-  padding-left: 10px;    /* テキストとの間に少し隙間を空ける */
+  padding-left: 10px;
   font-size: 0.9em;
   color: #db4d5b;
+}
+
+#bottom-row > h6 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#bottom-top > h6 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* 将棋盤の各マス（セル）の基本設定 */
+.cell {
+  /* 疑似要素を配置するための基準点となります */
+  position: relative; 
+}
+
+/* 星（黒点）を持つマスに適用するスタイル */
+.cell.star::after {
+  content: '';
+  position: absolute;
+  width:6px;
+  height: 6px;
+  background-color: #222;
+  border-radius: 50%;
+  right: 0;
+  bottom: 0;
+  transform: translate(calc(50% + 0.5px), calc(50% + 0.5px));
+  
+  z-index: 1; 
 }

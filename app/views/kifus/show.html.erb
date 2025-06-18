@@ -9,7 +9,8 @@
 
           <div id="shogi-container" data-kifu-id="<%= @kifu.id %>" data-comments="<%= @comments_hash.to_json %>">
             <div id="top-row">
-              <div id="gote-hand" class="komadai p-2"></div>
+              <div id="gote-hand" class="komadai p-2 mb-2"></div>
+              <h6 class="text-center">△：後手</h6>
             </div>
             <div id="middle-row">
               <div id="board-wapper" style="background-color: #cc841d; padding: 15px; display: inline-block;">
@@ -17,7 +18,8 @@
               </div>
             </div>
             <div id="bottom-row">
-              <div id="sente-hand" class="komadai p-2"></div>
+              <h6 class="text-center">▲：先手</h6>
+              <div id="sente-hand" class="komadai p-2 mt-2"></div>
             </div>
           </div>
 

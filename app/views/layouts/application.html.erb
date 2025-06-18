@@ -20,7 +20,7 @@
     <div id="kifu-form" class="d-flex justify-content-center mt-4 hidden">
       <div class="card shadow" style="max-width: 700px; width:100%;">
         <div class="card-body">
-          <h5 class="card-title">棋譜の読み込み</h5>
+          <h5 class="card-title text-center">棋譜の読み込み</h5>
   
           <%= form_with model: Kifu.new, url: kifus_path, local: true do |f| %>
             <div class="mb-3">
@@ -47,7 +47,7 @@
                     required: true %>
             </div>
   
-            <div class="text-end">
+            <div class="text-end text-center">
               <%= f.submit "読み込む", class: "btn btn-primary" %>
             </div>
           <% end %>

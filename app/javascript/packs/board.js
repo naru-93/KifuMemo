@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (kifuComments[0]) {
       const commentIndicator = document.createElement('span');
       commentIndicator.className = 'comment-indicator';
-      commentIndicator.textContent = '📝';
+      commentIndicator.textContent = '📝 コメントあり';
       initialItem.appendChild(commentIndicator);
     }
     listContainer.appendChild(initialItem);
@@ -315,11 +315,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (kifuComments[i]) {
         const commentIndicator = document.createElement('span');
         commentIndicator.className = 'comment-indicator';
-        commentIndicator.textContent = '📝コメント有';
+        commentIndicator.textContent = '📝コメントあり';
         moveItem.appendChild(commentIndicator);
       }
-      
-      // ▲▲▲ ここまで ▲▲▲
 
       listContainer.appendChild(moveItem);
     }
@@ -713,13 +711,22 @@ document.addEventListener('DOMContentLoaded', () => {
   
   function drawFullBoard() {
     board.innerHTML = '';
+
+    const starPositions = [
+      [2, 2], [2, 5],
+      [5, 2], [5, 5]
+    ];
+
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         const cell = document.createElement('div');
         cell.className = 'cell';
-        cell.style.cssText = `border: 1px solid #000; width: 70px; height: 77px; display: flex; align-items: center; justify-content: center; background-color: #cc841d; box-sizing: border-box;`;
+        cell.style.cssText = `border: 1px solid #000; width: 70px; height: 77px; display: flex; align-items: center; justify-content: center; background-color: #cc841d; box-sizing: border-box; position: relative;`;
         cell.dataset.row = row;
         cell.dataset.col = col;
+        if (starPositions.some(([r, c]) => r === row && c === col)) {
+          cell.classList.add('star');
+        }
         cell.addEventListener('click', handleCellClick);
         const piece = boardState[row][col];
         if (piece) {
