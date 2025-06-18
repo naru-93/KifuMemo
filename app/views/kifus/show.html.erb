@@ -1,7 +1,7 @@
 <main>
-  <div class="container-fluid mt-3">
+  <div class="container-fluid d-flex justify-content-center mt-3">
     <div class="row justify-content-center">
-      <div class="col-lg-auto">
+      <div class="col-auto">
         <div class="title-board">
           <div id="kifu-title" style="text-align: center; margin-bottom: 15px; font-size: 1.5rem; font-weight: bold;">
             <%= @kifu.title %>
@@ -31,17 +31,14 @@
         </div>
       </div>
 
-      <div class="col-lg-3">
+      <div class="col">
         <div class="kifulist-comments h-100 d-flex flex-column">
-      
           <div class="kifu-list-wrapper mb-3">
             <div id="kifu-move-list"></div>
           </div>
       
           <div id="comment-section" class="flex-grow-1 d-flex flex-column">
-      
             <textarea id="comment-input-area" class="form-control flex-grow-1" rows="10" placeholder="差し手へのコメント"></textarea>
-      
             <div class="d-flex align-items-center mt-2">
               <div class="symbol-buttons me-auto">
                 <button id="insert-sente-symbol" class="btn btn-sm btn-outline-secondary mr-1">▲：先手</button>
@@ -50,6 +47,7 @@
               <button id="save-comment-btn" class="btn btn-dark">保存</button>
             </div>
           </div>
+
         </div>
       </div>
     </div>

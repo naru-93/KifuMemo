@@ -218,6 +218,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================================
 
   /**
+   * 棋譜を一手進める
+   */
+  function goToNextMove() {
+    if (replayCurrent < jkfMoves.length - 1) {
+      replayCurrent++;
+      applyMovesUntil(replayCurrent);
+      updateMoveCounter();
+      displayCurrentComment();
+      highlightCurrentMoveInList();
+    }
+  }
+
+  /**
+   * 棋譜を一手戻す
+   */
+  function goToPreviousMove() {
+    if (replayCurrent > 0) {
+      replayCurrent--;
+      applyMovesUntil(replayCurrent);
+      updateMoveCounter();
+      displayCurrentComment();
+      highlightCurrentMoveInList();
+    }
+  }
+
+  /**
    * JKFの指し手オブジェクトを日本語棋譜形式の文字列に変換する（修正版）
    * @param {object} moveObject - JKFの指し手オブジェクト
    * @returns {string} - 例: "▲７六歩(77)" や "投了"
@@ -859,6 +885,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================================
   // 初期化とメインのイベントリスナー
   // ===================================================================
+  document.addEventListener('keydown', (e) => {
+    // コメント入力中に矢印キーを操作しても棋譜が動かないようにする
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+      return;
+    }
+
+    // 押されたキーに応じて処理を分岐
+    switch (e.key) {
+      case 'ArrowRight': // 右矢印キー
+        goToNextMove();
+        break;
+      
+      case 'ArrowLeft': // 左矢印キー
+        goToPreviousMove();
+        break;
+    }
+  });
 
   btnNext.addEventListener('click', () => {
     if (replayCurrent < jkfMoves.length - 1) {

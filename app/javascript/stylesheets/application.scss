@@ -228,3 +228,45 @@
   
   z-index: 1; 
 }
+
+@media (max-width: 1400px) {
+  #kifu-title {
+    display: none;
+  }
+  .title-board {
+    zoom: 0.72;
+    transform-origin: top left;
+  }
+  .kifulist-comments {
+    zoom: 0.72;
+    transform-origin: top left;
+  }
+  .navbar {
+    zoom: 0.8;
+    transform-origin: top left;
+  }
+  #kifu-form {
+    zoom: 0.8;
+    transform-origin: top left;
+    margin-top: 120px !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .title-board {
+    zoom: 0.7;
+    transform-origin: top left;
+  }
+  .kifulist-comments {
+    zoom: 0.7;
+    transform-origin: top left;
+  }
+  .navbar {
+    zoom: 0.8;
+    transform-origin: top left;
+  }
+  #kifu-form {
+    zoom: 0.8;
+    transform-origin: top left;
+  }
+}
