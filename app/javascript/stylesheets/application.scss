@@ -106,27 +106,27 @@
   height: auto;
   margin: 0 4px;
   cursor: pointer;
-  transition: all 0.2s ease; /* ★背景色や枠線の変化も滑らかにします */
+  transition: all 0.2s ease; /* 背景色と枠線の境界をぼかす処理 */
 
   background-color: #333;
-  border: 2px solid #c2c2c2;   /* 枠線 */
-  border-radius: 8px;      /* 角を丸くする */
-  padding: 5px;            /* 画像と背景の間に余白を作る */
-  box-sizing: border-box;  /* paddingとborderをwidth/heightに含めて計算する重要な設定 */
+  border: 2px solid #c2c2c2;
+  border-radius: 8px;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
 .promotion-ui img:hover {
   transform: scale(1.1);
-  border-color: #C2B2A0;      /* ★ホバー時の枠線色 */
-  background-color: #6A5D4D; /* ★ホバー時の背景色 */
+  border-color: #C2B2A0;
+  background-color: #6A5D4D;
 }
 
 /* ボタンと手数表示のコンテナ */
 #kifu-controls {
   display: flex;
-  justify-content: center; /* 中央揃え */
-  align-items: center;     /* 上下中央揃え */
-  margin-top: 15px;        /* 将棋盤との間に余白 */
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
   gap: 15px;               /* 各要素の間の隙間 */
 }
 
@@ -210,7 +210,7 @@
 
 /* 将棋盤の各マス（セル）の基本設定 */
 .cell {
-  /* 疑似要素を配置するための基準点となります */
+  /* 疑似要素を配置するための基準点*/
   position: relative; 
 }
 

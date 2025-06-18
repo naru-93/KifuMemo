@@ -176,8 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!selectedPiece) return; // 何も選択されていなければ何もしない
     const toCell = e.currentTarget; // クリックされたマス自身
 
-    // ★★★ ここから修正 ★★★
-
     // 選択中の駒が駒台にあるかどうかを判定する
     const isDropping = selectedPiece.closest('#sente-hand, #gote-hand');
 
@@ -217,9 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 補助関数群
   // ===================================================================
 
-  /**
-   * 棋譜を一手進める
-   */
+  // 棋譜を一手進める
   function goToNextMove() {
     if (replayCurrent < jkfMoves.length - 1) {
       replayCurrent++;
@@ -230,9 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /**
-   * 棋譜を一手戻す
-   */
+  // 棋譜を一手戻す
   function goToPreviousMove() {
     if (replayCurrent > 0) {
       replayCurrent--;
@@ -284,9 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return '';
   }
   
-  /**
-   * 棋譜リストをHTMLに描画する（レイアウト修正版）
-   */
+  // 棋譜リストをHTMLに描画する（レイアウト修正版）
   function renderMoveList() {
     const listContainer = document.getElementById('kifu-move-list');
     if (!listContainer) return;
@@ -371,11 +363,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /**
-   * 現在の手番のコメントを表示/入力欄に反映する
-   */
+  // 現在の手番のコメントを表示/入力欄に反映する
   function displayCurrentComment() {
-    // ★表示エリアに関する行を削除
+    // 表示エリアに関する行を削除
     const inputArea = document.getElementById('comment-input-area');
     const comment = kifuComments[replayCurrent] || ''; // 保存されたコメントを取得
   
@@ -404,9 +394,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const kifuId = container.dataset.kifuId;
 
     const inputArea = document.getElementById('comment-input-area');
-    const commentText = inputArea.value; // trim() は削除。空文字を送って削除を実現するため。
+    const commentText = inputArea.value;
 
-    // RailsのCSRFトークンを取得（Railsアプリでは必須）
+    // RailsのCSRFトークン？を取得
     const token = document.querySelector('meta[name="csrf-token"]').content;
 
     try {
@@ -414,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-Token': token // CSRFトークンをヘッダーに含める
+          'X-CSRF-Token': token // CSRFトークン？をヘッダーに含める
         },
         body: JSON.stringify({
           move_number: replayCurrent,
@@ -447,9 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /**
-   * 手数カウンターの表示を更新する
-   */
+  // 手数カウンターの表示を更新する
   function updateMoveCounter() {
     const counterElement = document.getElementById('move-counter');
     if (counterElement) {
@@ -463,15 +451,15 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {object} pieceData - 動かす駒のデータ { type, owner }
    * @returns {Promise<boolean>} - 「成る」画像がクリックされたら true、「成らない」なら false を返す
    */
-  function waitForPromotionChoice(targetCell, pieceData) { // ★変更点1: pieceData を追加
+  function waitForPromotionChoice(targetCell, pieceData) { // pieceData を追加
     return new Promise(resolve => {
       const promotionUI = document.getElementById('promotion-choice');
-      // ★変更点2: ボタンから画像要素の取得に変更
+      // ボタンから画像要素の取得に変更
       const yesImg = document.getElementById('promote-yes-img');
       const noImg = document.getElementById('promote-no-img');
       const board = document.getElementById('shogi-board');
 
-      // ★変更点3: pieceData に基づいて表示する画像のURLを動的に設定
+      // pieceData に基づいて表示する画像のURLを動的に設定
       const ownerPrefix = pieceData.owner === 'gote' ? 'r_' : '';
       // 「成る」画像のURL（例: /assets/koma/fu_n.png）
       yesImg.src = `/assets/koma/${ownerPrefix}${pieceData.type}_n.png`;
@@ -493,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resolve(promotes);
       };
 
-      // ★変更点4: イベントリスナーを画像に設定
+      // イベントリスナーを画像に設定
       yesImg.addEventListener('click', () => handleChoice(true), { once: true });
       noImg.addEventListener('click', () => handleChoice(false), { once: true });
     });
@@ -514,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
       legalMoves = canMove(boardState[r][c], r, c, boardState);
       highlightCells(legalMoves);
     } 
-    // ★駒台の駒の場合の処理を追加★
+    // 駒台の駒の場合の処理
     else {
       const owner = getOwnerOfMovingPiece(img);
       const pieceKey = img.alt;
@@ -549,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /**
    * 指定された駒を打つことが可能な全てのマスを計算して返す
-   * @param {string} pieceKey - 打つ駒のキー ('FU', 'KA'など)
+   * @param {string} pieceKey - 打つ駒のキー ('FU'など)
    * @param {string} owner - 手番のプレイヤー ('sente' or 'gote')
    * @returns {Array<[number, number]>} - 配置可能なマスの [row, col] の配列
    */
@@ -641,7 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const canPromotePiece = ['fu', 'kyosha', 'keima', 'gin', 'kaku', 'hisha'].includes(pieceType);
       if (canPromotePiece && (isPromotionZone(toRow, owner) || isPromotionZone(fromRow, owner))) {
         
-        // ★変更点: waitForPromotionChoice に movingPieceData を渡す
+        // waitForPromotionChoice に movingPieceData を渡す
         const userChoosesToPromote = await waitForPromotionChoice(fromCell, movingPieceData); 
         
         if (userChoosesToPromote) {
@@ -675,8 +663,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function dropPiece(pieceImg, toCell) {
       // 1. 駒を打つために必要な情報を取得
       const owner = getOwnerOfMovingPiece(pieceImg);
-      const pieceKey = pieceImg.alt; // 'FU', 'KA'など
-      const pieceType = pieceKeyToType[pieceKey]; // 'fu', 'kaku'など
+      const pieceKey = pieceImg.alt; // 'FU'など
+      const pieceType = pieceKeyToType[pieceKey]; // 'fu'など
       const toRow = parseInt(toCell.dataset.row);
       const toCol = parseInt(toCell.dataset.col);
     
@@ -947,7 +935,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- 棋譜リストのクリックイベント ---
+  // 棋譜リストのクリックイベント
   const moveListContainer = document.getElementById('kifu-move-list');
   if (moveListContainer) {
     moveListContainer.addEventListener('click', (e) => {
@@ -975,11 +963,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  setupInitialBoard();         // 1. 盤面の基本的な設定
-  loadComments();              // 2. ★★★まずコメントデータを読み込む★★★
-  renderMoveList();            // 3. ★★★コメントデータを元に棋譜リストを描画★★★
-  applyMovesUntil(replayCurrent); // 4. 盤面を初期位置に設定
-  updateMoveCounter();         // 5. 手数カウンターを更新
-  displayCurrentComment();     // 6. コメント欄を更新
-  highlightCurrentMoveInList();  // 7. 棋譜リストのハイライトを更新
+  setupInitialBoard();         // 盤面の基本的な設定
+  loadComments();              // まずコメントデータを読み込む
+  renderMoveList();            // コメントデータを元にコメント印を描画
+  applyMovesUntil(replayCurrent); // 盤面を初期位置に設定
+  updateMoveCounter();         // 手数カウンターを更新
+  displayCurrentComment();     // コメント欄を更新
+  highlightCurrentMoveInList();  // 棋譜リストのハイライトを更新
 });
