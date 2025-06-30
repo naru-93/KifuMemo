@@ -1,0 +1,20 @@
+<main>
+  <div class="container px-5 px-sm-0">
+    <div class="col-md-3">
+      <div class="user-info text-center">
+        <table class="table table-borderless">
+          <tr>
+            <% if @user.profile_image.attached? %>
+              <%= image_tag @user.profile_image, size: "140x140", style: "border-radius: 5px;" %>
+            <% else %>
+              <%= image_tag "no_image.jpg", size: "140x140", style: "border-radius: 5px;" %>
+            <% end %>
+          </tr>
+          <tr>
+            <th><%= @user.name %></th>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
